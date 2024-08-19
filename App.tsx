@@ -1,5 +1,6 @@
 import { StatusBar } from 'expo-status-bar';
 import { Dimensions } from 'react-native';
+import { registerRootComponent } from 'expo';
 
 // Navigation
 import { NavigationContainer } from '@react-navigation/native';
@@ -68,3 +69,5 @@ export default function App() {
     </Provider>
   );
 }
+
+registerRootComponent(App);

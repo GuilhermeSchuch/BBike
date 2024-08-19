@@ -1,9 +1,13 @@
 import {
   View,
-  Text,
-  Dimensions,
-  StyleSheet,
+  Text,  
+  StyleSheet
 } from "react-native";
+
+import { check, request, PERMISSIONS, RESULTS, checkNotifications } from 'react-native-permissions';
+
+// Hooks
+import { useEffect, useState } from "react";
 
 // Components
 import { PrimaryModal } from "@components";
@@ -12,19 +16,31 @@ import { PrimaryModal } from "@components";
 import { lightTheme, defaultTheme } from "src/utils/theme";
 
 // Hooks
-import { useSelector, UseSelector } from "react-redux";
-
-const { width, height } = Dimensions.get('window');
+import { useSelector } from "react-redux";
 
 const Home = () => {
   const { localDefined } = useSelector((state: any) => state.pedal);
-  console.log(localDefined)
+  const [locationEnabled, setLocationEnabled] = useState(false);
+  
+  useEffect(() => {
+    // const checkLocationPermission = async () => {
+      
+    // };
+
+    // checkLocationPermission();
+    
+    
+  }, []);
 
   return (
     <View style={[styles.outterContainer,]}>
       <View style={[styles.container, defaultTheme.container]}>
         {localDefined === undefined && (
           <PrimaryModal />
+        )}
+
+        {localDefined === false && (
+          <Text>oie</Text>
         )}
       </View>
     </View>

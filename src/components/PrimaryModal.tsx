@@ -27,14 +27,19 @@ interface Props {
 const PrimaryModal = ({ size="medium" }: Props) => {
   const [isModalVisible, setModalVisible] = useState(false);
   const [options, setOptions] = useState({});
+  const [granted, setGranted] = useState('');
 
   const dispatch = useDispatch();
 
-  const handleModal = (granted: String) => {
-    dispatch(setLocalDefined({
-      isLocalDefined: granted === "yes" ? true : false
-    }))
+  const handleModal = (granted: string) => {
+    setGranted(granted);
 
+    setTimeout(() => {
+      dispatch(setLocalDefined({
+        isLocalDefined: granted === "yes" ? true : false
+      }))
+    }, 1000);
+    
     setModalVisible(!isModalVisible);
   }
 
@@ -58,9 +63,11 @@ const PrimaryModal = ({ size="medium" }: Props) => {
 
   return (
     <View>
-      <PrimaryButton onPress={() => setModalVisible(true)} size={"large"}>
-        <Text style={styles.buttonText}>Começar pedal</Text>
-      </PrimaryButton>
+      {!granted && (
+        <PrimaryButton onPress={() => setModalVisible(true)} size={"large"}>
+          <Text style={styles.buttonText}>Começar pedal</Text>
+        </PrimaryButton>
+      )}
 
       <Modal
         isVisible={isModalVisible}
