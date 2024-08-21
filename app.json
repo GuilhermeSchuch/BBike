@@ -1,15 +1,25 @@
 {
   "expo": {
-    "name": "bbike",
+    "name": "Bbike",
     "slug": "bbike",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
+    "plugins": [
+      [
+        "expo-location",
+        {
+          "locationAlwaysAndWhenInUsePermission": "Permitir $(PRODUCT_NAME) usar sua localização.",
+          "locationAlwaysPermission": "Permitir $(PRODUCT_NAME) usar sua localização.",
+          "locationWhenInUsePermission": "Permitir $(PRODUCT_NAME) usar sua localização."
+        }
+      ]
+    ],
     "splash": {
       "image": "./assets/splash.png",
       "resizeMode": "contain",
-      "backgroundColor": "#ffffff"
+      "backgroundColor": "#F1E8D9"
     },
     "ios": {
       "supportsTablet": true
@@ -17,12 +27,17 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
-        "backgroundColor": "#ffffff"
+        "backgroundColor": "#F1E8D9"
       },
       "package": "com.g_schuch.bbike"
     },
     "web": {
       "favicon": "./assets/favicon.png"
+    },
+    "extra": {
+      "eas": {
+        "projectId": "231ba0e7-7b7e-4563-8e87-c95262d07051"
+      }
     }
   }
 }
