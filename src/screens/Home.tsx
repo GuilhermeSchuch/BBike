@@ -4,13 +4,12 @@ import {
   StyleSheet
 } from "react-native";
 
-// Locartion
-import * as Location from "expo-location";
-import * as TaskManager from "expo-task-manager";
-
+// Services
+import { startForegroundService } from "src/services/trackingLocation";
 
 // Hooks
 import { useEffect, useState } from "react";
+import { useSelector } from "react-redux";
 
 // Components
 import { PrimaryModal } from "@components";
@@ -18,68 +17,54 @@ import { PrimaryModal } from "@components";
 // Utils
 import { lightTheme, defaultTheme } from "src/utils/theme";
 
-// Hooks
-import { useSelector } from "react-redux";
+// Config
+import { CONFIG } from "src/config/config"
+
+import { getStoredPedalData } from "src/services/storage";
+
+interface Location {
+  coords: {
+    latitude: 0,
+    longitude: 0
+  }
+}
 
 const Home = () => {
   const { localDefined } = useSelector((state: any) => state.pedal);  
-  const [currentLocation, setCurrentLocation] = useState<Location.LocationObject | null>(null);
+  const [currentTrack, setCurrentTrack] = useState<Location[]>([]);
+  const [currentCity, setCurrentCity] = useState<String>("");
 
-  const BACKGROUND_LOCATION = "background-location-task";
+  const { GEO_API_KEY } = CONFIG;
 
-  TaskManager.defineTask(BACKGROUND_LOCATION, ({ data, error }) => {
-    if (error) {
-      console.error("Error in location task:", error);
-      return;
-    }
-    if (data) {
-      const { locations }: any = data;
-      if (locations && locations.length > 0) {
-        const location = locations[0];        
-        handleLocation(location);
+  useEffect(() => {  
+    startForegroundService();
+
+    getStoredPedalData().then((data) => {
+      setCurrentTrack(data[0].currentTrack);
+
+      const { latitude, longitude } = data[0].currentTrack[0].coords;
+      // getCurrentCity(latitude, longitude);
+    })
+
+    const getCurrentCity = async (lat: number, lon: number) => {
+      const url = `https://api.opencagedata.com/geocode/v1/json?q=${lat},${lon}&key=${GEO_API_KEY}`;
+
+      try {
+        const response = await fetch(url);
+
+        if (!response.ok) {
+          console.error(`Response status: ${response.status}`)
+        }
+    
+        const json = await response.json();
+        setCurrentCity(json.results[0].components.city_district);
+
       }
-    }
-  });
-
-  const handleLocation = (location: Location.LocationObject) => {
-    console.log(location);
-    setCurrentLocation(location);
-  }
-
-  useEffect(() => {
-    const requestPermissions = async () => {
-      const { status: foregroundStatus } = await Location.requestForegroundPermissionsAsync();
-      const { status: backgroundStatus } = await Location.requestBackgroundPermissionsAsync();
-      
-      return { foregroundStatus, backgroundStatus }
+      catch (error) {
+        console.error(error)
+      }
     }
     
-    requestPermissions().then(async (response) => {
-      const { foregroundStatus, backgroundStatus } = response;
-      console.info(`foregroundStatus: ${foregroundStatus}`);
-      console.info(`backgroundStatus: ${backgroundStatus}`);
-
-      if (foregroundStatus === "granted" && backgroundStatus === "granted") {
-        await Location.startLocationUpdatesAsync(BACKGROUND_LOCATION, {
-          accuracy: Location.Accuracy.BestForNavigation,
-          timeInterval: 60000, 
-          distanceInterval: 0,
-          showsBackgroundLocationIndicator: true,
-          foregroundService: {
-            notificationTitle: "Localicação sendo compartilhada.",
-            notificationBody: "Sua localização está sendo utilizada em segundo plano por esse aplicativo.",
-          },
-        });
-      }
-
-      if(!currentLocation) {
-        Location.getCurrentPositionAsync({
-          accuracy: Location.Accuracy.BestForNavigation
-        }).then((response) => {
-          setCurrentLocation(response);
-        })
-      }
-    })
   }, []);
 
   return (
@@ -90,8 +75,14 @@ const Home = () => {
         )}
 
         {localDefined === false && (
-          currentLocation ? (
-            <Text>Lat: {currentLocation.coords.latitude}, Lon: {currentLocation.coords.longitude}</Text>
+          currentTrack ? (
+            <>
+              <Text>{ currentCity }</Text>
+
+              {currentTrack.map((track: any, index) => (
+                <Text key={index}>Lat: { track.coords.latitude } Lon: { track.coords.longitude }</Text>
+              ))}
+            </>
           ) : (
             <Text>oie</Text>
           )

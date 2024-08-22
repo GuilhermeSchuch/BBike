@@ -29,6 +29,13 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#F1E8D9"
       },
+      "permissions": [
+        "android.permission.ACCESS_BACKGROUND_LOCATION",
+        "android.permission.ACCESS_COARSE_LOCATION",
+        "android.permission.ACCESS_FINE_LOCATION",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.READ_EXTERNAL_STORAGE"
+      ],
       "package": "com.g_schuch.bbike"
     },
     "web": {
