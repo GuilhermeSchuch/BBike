@@ -1,8 +1,14 @@
 import { createSlice } from "@reduxjs/toolkit";
 
-const initialState = {
-  localDefined: undefined
+interface PedalState {
+  localDefined: boolean | undefined;
+  currentTrack: Object[];
 }
+
+const initialState: PedalState = {
+  localDefined: undefined,
+  currentTrack: [],
+};
 
 export const pedalSlice = createSlice({
   name: "pedal",
@@ -11,6 +17,11 @@ export const pedalSlice = createSlice({
     setLocalDefined: (state, actions) => {
       const { isLocalDefined } = actions.payload;
       state.localDefined = isLocalDefined;
+    },
+
+    setCurrentTrack: (state, actions) => {
+      const { currentTrack } = actions.payload;
+      state.currentTrack.push([...state.currentTrack, currentTrack]);
     }
   }
 });

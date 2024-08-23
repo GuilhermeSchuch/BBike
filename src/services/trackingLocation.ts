@@ -1,7 +1,13 @@
-// Locartion
+// Location
 import * as Location from "expo-location";
 import * as TaskManager from "expo-task-manager";
 import { PermissionsAndroid } from "react-native";
+
+// FileSystem
+import * as FileSystem from "expo-file-system";
+
+// Redux
+import { useDispatch } from "react-redux";
 
 // Storage
 import { storePedalData, getStoredPedalData } from "./storage";
@@ -18,11 +24,9 @@ TaskManager.defineTask(BACKGROUND_LOCATION, ({ data, error }) => {
     const { locations }: any = data;
 
     getStoredPedalData().then((pedalData) => {
-      const previousTracks = pedalData[0].currentTrack;
-
       if (locations && locations.length > 0) {
         const location = locations[0];
-        storePedalData({currentTrack: [...previousTracks, location]});
+        storePedalData([...pedalData, location]);
       }
     })
   }
@@ -83,19 +87,16 @@ export const startForegroundService = () => {
     }
 
     getStoredPedalData().then(async (data) => {
+      // const CURRENT_TRACK = `${FileSystem.documentDirectory}currentTrack.json`;
+      // if(CURRENT_TRACK) await FileSystem.deleteAsync(CURRENT_TRACK, { idempotent: true });
+
       if(data.length === 0) {
         Location.getCurrentPositionAsync({
           accuracy: Location.Accuracy.BestForNavigation
         }).then((location) => {
-          console.log(location);
-          storePedalData({currentTrack: [location]});
+          console.log("chamou");
+          storePedalData([location]);
         })
-      }
-      else {
-        console.log("maior que 0");
-        console.log(data);
-        // const PEDAL_DATA_FILE = `${FileSystem.documentDirectory}pedal.json`;
-        // await FileSystem.deleteAsync(PEDAL_DATA_FILE, { idempotent: true });
       }
     })
   })

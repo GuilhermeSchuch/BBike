@@ -22,6 +22,9 @@ import { CONFIG } from "src/config/config"
 
 import { getStoredPedalData } from "src/services/storage";
 
+import * as FileSystem from "expo-file-system";
+const PEDAL_DATA_FILE = `${FileSystem.documentDirectory}pedal.json`;
+
 interface Location {
   coords: {
     latitude: 0,
@@ -32,7 +35,7 @@ interface Location {
 const Home = () => {
   const { localDefined } = useSelector((state: any) => state.pedal);  
   const [currentTrack, setCurrentTrack] = useState<Location[]>([]);
-  const [currentCity, setCurrentCity] = useState<String>("");
+  const [currentCity, setCurrentCity] = useState<String>("Igrejinha");
 
   const { GEO_API_KEY } = CONFIG;
 
@@ -40,9 +43,11 @@ const Home = () => {
     startForegroundService();
 
     getStoredPedalData().then((data) => {
-      setCurrentTrack(data[0].currentTrack);
+      setCurrentTrack(data[0]);
+      console.log("aqui")
+      console.log(data[0]);
 
-      const { latitude, longitude } = data[0].currentTrack[0].coords;
+      // const { latitude, longitude } = data[0].currentTrack[0].coords;
       // getCurrentCity(latitude, longitude);
     })
 
@@ -63,7 +68,7 @@ const Home = () => {
       catch (error) {
         console.error(error)
       }
-    }
+    }  
     
   }, []);
 

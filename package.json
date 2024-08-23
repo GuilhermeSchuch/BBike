@@ -6,6 +6,7 @@
     "start": "expo start --clear",
     "outdated": "npx expo install --check",
     "doctor": "npx expo-doctor",
+    "build": "eas build --profile android-apk",
     "android": "expo run:android",
     "ios": "expo run:ios",
     "web": "expo start --web"
@@ -19,7 +20,7 @@
     "@react-navigation/native": "^6.1.18",
     "@react-navigation/stack": "^6.4.1",
     "@reduxjs/toolkit": "^2.2.7",
-    "expo": "~51.0.28",
+    "expo": "^51.0.31",
     "expo-file-system": "^17.0.1",
     "expo-location": "~17.0.1",
     "expo-status-bar": "~1.12.1",
