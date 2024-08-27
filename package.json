@@ -36,6 +36,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
+    "@sentry/react-native": "^5.22.0",
     "@types/react": "~18.2.45",
     "expo-doctor": "^1.9.1",
     "typescript": "^5.3.3"

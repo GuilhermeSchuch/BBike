@@ -44,7 +44,10 @@ const Home = () => {
 
     getStoredPedalData().then((data) => {
       setCurrentTrack(data[0]);
-      console.log("aqui")
+      console.log("sem array[0]");
+      console.log(data);
+
+      console.log("com array[0]");
       console.log(data[0]);
 
       // const { latitude, longitude } = data[0].currentTrack[0].coords;

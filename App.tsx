@@ -20,7 +20,21 @@ import { lightTheme } from 'src/utils/theme';
 import { store } from "./src/app/store";
 import { Provider } from "react-redux";
 
+import * as Sentry from "@sentry/react-native";
+
 const { width, height } = Dimensions.get('window');
+
+Sentry.init({
+  dsn: "https://944436c247f1dfd47dfe7dc792666aee@o4507685954191360.ingest.us.sentry.io/4507685955502081",
+  // Set tracesSampleRate to 1.0 to capture 100% of transactions for tracing.
+  // We recommend adjusting this value in production.
+  tracesSampleRate: 1.0,
+  _experiments: {
+    // profilesSampleRate is relative to tracesSampleRate.
+    // Here, we'll capture profiles for 100% of transactions.
+    profilesSampleRate: 1.0,
+  },
+});
 
 export default function App() {
   const Tab = createBottomTabNavigator();

@@ -9,23 +9,31 @@ import * as FileSystem from "expo-file-system";
 // Redux
 import { useDispatch } from "react-redux";
 
+import * as Sentry from "@sentry/react-native";
+
 // Storage
 import { storePedalData, getStoredPedalData } from "./storage";
 
 const BACKGROUND_LOCATION = "background-location-task";
 
 TaskManager.defineTask(BACKGROUND_LOCATION, ({ data, error }) => {
+  console.log("chamaste");
+  
   if(error) {
     console.error("Error in location task:", error);
     return;
   }
 
   if(data) {
+    Sentry.captureMessage("Task called");
     const { locations }: any = data;
 
     getStoredPedalData().then((pedalData) => {
+      Sentry.captureMessage("getPedalData in task called");
+
       if (locations && locations.length > 0) {
         const location = locations[0];
+        Sentry.captureMessage("Storing data...");
         storePedalData([...pedalData, location]);
       }
     })
@@ -72,7 +80,7 @@ export const startForegroundService = () => {
     console.info(`backgroundStatus: ${backgroundStatus}`);
     console.info(`writeStorageStatus: ${writeStorageStatus}`);
 
-    if (foregroundStatus === "granted" && backgroundStatus === "granted") {
+    if (foregroundStatus === "granted" && backgroundStatus === "granted" && writeStorageStatus === "granted") {
       await Location.startLocationUpdatesAsync(BACKGROUND_LOCATION, {
         accuracy: Location.Accuracy.BestForNavigation,
         timeInterval: 5000,
@@ -84,6 +92,9 @@ export const startForegroundService = () => {
           notificationBody: "Sua localização está sendo utilizada em segundo plano por esse aplicativo.",
         },
       });
+
+      console.info("Service Started");
+      Sentry.captureMessage("Service Started");
     }
 
     getStoredPedalData().then(async (data) => {
