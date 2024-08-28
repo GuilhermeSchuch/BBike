@@ -1,7 +1,8 @@
 import {
   View,
   Text,  
-  StyleSheet
+  StyleSheet,
+  Image
 } from "react-native";
 
 // Services
@@ -16,14 +17,15 @@ import { PrimaryModal } from "@components";
 
 // Utils
 import { lightTheme, defaultTheme } from "src/utils/theme";
+import { getDimensions } from "@utils";
 
 // Config
 import { CONFIG } from "src/config/config"
 
 import { getStoredPedalData } from "src/services/storage";
 
-import * as FileSystem from "expo-file-system";
-const PEDAL_DATA_FILE = `${FileSystem.documentDirectory}pedal.json`;
+// import * as FileSystem from "expo-file-system";
+// const PEDAL_DATA_FILE = `${FileSystem.documentDirectory}pedal.json`;
 
 interface Location {
   coords: {
@@ -31,6 +33,8 @@ interface Location {
     longitude: 0
   }
 }
+
+const { width, height } = getDimensions();
 
 const Home = () => {
   const { localDefined } = useSelector((state: any) => state.pedal);  
@@ -50,7 +54,7 @@ const Home = () => {
       console.log("com array[0]");
       console.log(data[0]);
 
-      // const { latitude, longitude } = data[0].currentTrack[0].coords;
+      // const { latitude, longitude } = data[0][0].coords;
       // getCurrentCity(latitude, longitude);
     })
 
@@ -65,8 +69,9 @@ const Home = () => {
         }
     
         const json = await response.json();
-        setCurrentCity(json.results[0].components.city_district);
 
+        const { city_district, state_code } = json.results[0].components;
+        setCurrentCity(`${city_district}, ${state_code}`);
       }
       catch (error) {
         console.error(error)
@@ -76,16 +81,21 @@ const Home = () => {
   }, []);
 
   return (
-    <View style={[styles.outterContainer,]}>
+    <View style={[styles.outterContainer]}>
       <View style={[styles.container, defaultTheme.container]}>
-        {localDefined === undefined && (
-          <PrimaryModal />
-        )}
+        <View style={localDefined === undefined && styles.modalContainer}>
+          {localDefined === undefined && (
+            <PrimaryModal />
+          )}
+        </View>
 
         {localDefined === false && (
           currentTrack ? (
             <>
-              <Text>{ currentCity }</Text>
+              <View style={styles.currentCityContainer}>
+                <Image style={styles.mapPinImage} source={require("src/assets/images/map-pin.png")} />
+                <Text style={[styles.currentCity]}>{ currentCity }</Text>
+              </View>
 
               {currentTrack.map((track: any, index) => (
                 <Text key={index}>Lat: { track.coords.latitude } Lon: { track.coords.longitude }</Text>
@@ -108,8 +118,29 @@ const styles = StyleSheet.create({
 
   container: {
     flex: 1,
+    alignItems: "center",
+  },
+
+  modalContainer: {
+    flex: 1,
     justifyContent: "center",
     alignItems: "center",
+  },
+
+  currentCityContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 3
+  },
+
+  currentCity: {
+    fontSize: defaultTheme.fontLarge,    
+    color: lightTheme.secondaryColor
+  },
+
+  mapPinImage: {
+    width: defaultTheme.fontExtraLarge,
+    height: defaultTheme.fontExtraLarge,
   },
 })
 

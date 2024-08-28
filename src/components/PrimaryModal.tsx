@@ -82,11 +82,11 @@ const PrimaryModal = ({ size="medium" }: Props) => {
 
           <View style={styles.modalButtonsContainer}>
             <TertiaryButton size={"medium"} onPress={() => handleModal("no")}>
-              <Text style={[defaultTheme.fontLarge, {color: lightTheme.primaryColor}]}>Não</Text>
+              <Text style={[styles.modalButtonText, {color: lightTheme.primaryColor}]}>Não</Text>
             </TertiaryButton>
 
             <SecondaryButton size={"medium"} onPress={() => handleModal("yes")}>
-              <Text style={[defaultTheme.fontLarge, {color: lightTheme.secondaryColor}]}>Sim</Text>
+              <Text style={[styles.modalButtonText, {color: lightTheme.secondaryColor}]}>Sim</Text>
             </SecondaryButton>
           </View>
 
@@ -116,6 +116,10 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     marginTop: "auto"
+  },
+
+  modalButtonText: {
+    fontSize: defaultTheme.fontLarge
   },
 
   buttonText: {

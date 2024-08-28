@@ -24,7 +24,6 @@ export const defaultTheme = {
     borderColor: "#F00"
   },
 
-  fontLarge: {
-    fontSize: width / 15
-  }
+  fontLarge: width / 15,
+  fontExtraLarge: width / 10
 }

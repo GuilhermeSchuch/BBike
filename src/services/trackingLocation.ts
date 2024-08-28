@@ -81,20 +81,24 @@ export const startForegroundService = () => {
     console.info(`writeStorageStatus: ${writeStorageStatus}`);
 
     if (foregroundStatus === "granted" && backgroundStatus === "granted" && writeStorageStatus === "granted") {
-      await Location.startLocationUpdatesAsync(BACKGROUND_LOCATION, {
-        accuracy: Location.Accuracy.BestForNavigation,
-        timeInterval: 5000,
-        // timeInterval: 60000,
-        distanceInterval: 0,
-        showsBackgroundLocationIndicator: true,
-        foregroundService: {
-          notificationTitle: "Localicação sendo compartilhada.",
-          notificationBody: "Sua localização está sendo utilizada em segundo plano por esse aplicativo.",
-        },
-      });
+      const hasStarted = await Location.hasStartedLocationUpdatesAsync(BACKGROUND_LOCATION);
 
-      console.info("Service Started");
-      Sentry.captureMessage("Service Started");
+      if(!hasStarted) {
+        await Location.startLocationUpdatesAsync(BACKGROUND_LOCATION, {
+          accuracy: Location.Accuracy.BestForNavigation,
+          timeInterval: 60000,
+          distanceInterval: 0,
+          showsBackgroundLocationIndicator: true,
+          foregroundService: {
+            notificationTitle: "Localicação sendo compartilhada.",
+            notificationBody: "Sua localização está sendo utilizada em segundo plano por esse aplicativo.",
+          },
+        });
+        
+        console.info("Service Started");
+        Sentry.captureMessage("Service Started");
+      }
+
     }
 
     getStoredPedalData().then(async (data) => {
